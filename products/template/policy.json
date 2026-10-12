@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "product_id": "future-product-template",
+  "policy": {
+    "blocked_versions": [],
+    "emergency_disabled": false,
+    "expires_at": "2027-10-12T00:00:00Z",
+    "global_emergency_disabled": false,
+    "issued_at": "2026-10-12T00:00:00Z",
+    "maintenance": {
+      "enabled": false,
+      "message": "Service undergoing scheduled maintenance."
+    },
+    "min_version": "1.0.0",
+    "revision": 1,
+    "user_message": null
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "public_key": "2f029fce662a015a2b13a0e0261eea6fb13aae7ba832e6a4c80f6026ef6b6db7",
+    "signature_hex": "a8f916cdb370410a6414c3e40f9232f1797beef87b9d7b0c2ba7943175888271fc692285ed132469e3a02c0db93cb4272eb1146bde86b7247844a1b49eede60a"
+  }
+}

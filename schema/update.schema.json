@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PanelsControlCenterUpdate",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_id",
+    "latest_version",
+    "latest_version_code",
+    "min_supported_version",
+    "mandatory",
+    "release_date",
+    "release_notes",
+    "download_url",
+    "apk_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "latest_version": {
+      "type": "string"
+    },
+    "latest_version_code": {
+      "type": "integer"
+    },
+    "min_supported_version": {
+      "type": "string"
+    },
+    "mandatory": {
+      "type": "boolean"
+    },
+    "release_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "release_notes": {
+      "type": "string"
+    },
+    "download_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "apk_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    }
+  }
+}

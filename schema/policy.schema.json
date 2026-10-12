@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PanelsControlCenterPolicy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_id",
+    "policy",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "revision",
+        "issued_at",
+        "expires_at",
+        "min_version",
+        "blocked_versions",
+        "maintenance",
+        "emergency_disabled",
+        "global_emergency_disabled"
+      ],
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "min_version": {
+          "type": "string"
+        },
+        "blocked_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maintenance": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "message"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        "emergency_disabled": {
+          "type": "boolean"
+        },
+        "global_emergency_disabled": {
+          "type": "boolean"
+        },
+        "user_message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "public_key",
+        "signature_hex"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "ed25519"
+          ]
+        },
+        "public_key": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "signature_hex": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{128}$"
+        }
+      }
+    }
+  }
+}

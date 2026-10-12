@@ -1,0 +1,26 @@
+name: Validate and Deploy Control Center
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install cryptography jsonschema
+
+      - name: Verify policy signatures
+        run: |
+          python scripts/verify_policy.py products/the-panels-streaming/policy.json
+          python scripts/verify_policy.py products/template/policy.json
