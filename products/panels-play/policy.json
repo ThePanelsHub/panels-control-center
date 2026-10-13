@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "product_id": "panels-play",
+  "policy": {
+    "revision": 1,
+    "issued_at": "2026-10-13T00:00:00Z",
+    "expires_at": "2027-10-13T00:00:00Z",
+    "min_version": "1.0.0",
+    "blocked_versions": [],
+    "maintenance": {
+      "enabled": false,
+      "message": "Panels Play is temporarily undergoing scheduled maintenance. Please check back shortly."
+    },
+    "emergency_disabled": false,
+    "global_emergency_disabled": false,
+    "user_message": null
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "public_key": "2f029fce662a015a2b13a0e0261eea6fb13aae7ba832e6a4c80f6026ef6b6db7",
+    "signature_hex": "86d9e6e61e517ec0d9b0a72728cf3b86ee7e48a2a6cd4c29afeba2b8970e7f5c4f4c335fc05d2189b6380af3e5085aedc9501ce449c3bf141257414730503703"
+  }
+}

@@ -25,7 +25,7 @@ def sign_file(policy_file_path, private_key_hex):
     pub = priv.public_key()
     pub_bytes = pub.public_bytes(
         encoding=serialization.Encoding.Raw,
-        format=serialization.PrivateFormat.Raw if hasattr(serialization, 'PrivateFormat') else serialization.PublicFormat.Raw
+        format=serialization.PublicFormat.Raw
     )
 
     canon = canonical_bytes(data['policy'])
