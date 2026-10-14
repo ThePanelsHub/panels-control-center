@@ -5,7 +5,7 @@
   "latest_version_code": 141,
   "min_supported_version": "1.0.0",
   "mandatory": false,
-  "release_date": "2026-10-14T15:18:25Z",
+  "release_date": "2026-10-14T15:21:26Z",
   "release_notes": "Official release of Panels Play v1.0.0 with AuthLX licensing, dark theme, and high performance streaming.",
   "download_url": "https://github.com/ThePanelsHub/the-panels-streaming/releases/download/v1.0.0/PanelsPlay-v1.0.0-universal-release.apk",
   "apk_sha256": "c8d187053d0657f27ffc39d8ce5304701d76fc7dafb86b14170cfb1198593317"
