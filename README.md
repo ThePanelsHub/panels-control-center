@@ -1,6 +1,9 @@
 # 🌐 The Panels Control Center
 
-**The Panels Control Center** is the central, public control plane for products published under **The Panels Hub** (including **The Panels Streaming**).
+**The Panels Control Center** is the central, public control plane for products published under **The Panels Hub** (including **Panels Play** and **The Panels Streaming**).
+
+> 🖥️ **Web Dashboard Console**: [https://ThePanelsHub.github.io/panels-control-center/](https://ThePanelsHub.github.io/panels-control-center/)
+> Use the graphical web dashboard to toggle maintenance mode, trigger emergency kill switches, update version restrictions, and publish releases with 1 click directly from your browser!
 
 It centrally manages:
 - **Version Lifecycle & Policies**: Enforces minimum supported versions and deprecation blocks.
