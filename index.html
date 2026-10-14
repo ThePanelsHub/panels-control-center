@@ -1,1229 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Panels Hub — Control Center</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="scripts/nacl-fast.min.js"></script>
-  <script>
-    // Fallback if local script not found (e.g. running outside repo root)
-    if (typeof nacl === 'undefined') {
-      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.2/nacl-fast.min.js"><\/script>');
-    }
-  </script>
-  <style>
-    :root {
-      --bg-base: #07090e;
-      --bg-surface: #0e131f;
-      --bg-card: #141b2d;
-      --bg-card-hover: #192238;
-      --border: #1f2a44;
-      --border-focus: #3b82f6;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --primary: #0284c7;
-      --primary-hover: #0369a1;
-      --primary-glow: rgba(2, 132, 199, 0.25);
-      --accent: #8b5cf6;
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.15);
-      --danger-hover: #dc2626;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-full: 9999px;
-      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panels Play — Control Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="scripts/nacl-fast.min.js"></script>
+<script>if(typeof nacl==='undefined')document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.2/nacl-fast.min.js"><\/script>');</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#090c14;--surface:#111827;--card:#1a2236;--border:#283046;--focus:#3b82f6;--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--blue:#0ea5e9;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--radius:10px;--font:Inter,system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.5;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg-base);
-      color: var(--text-main);
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.5;
-      background-image: 
-        radial-gradient(circle at 15% 10%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 45%);
-    }
+/* Layout */
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 100px}
+header{border-bottom:1px solid var(--border);padding:16px 0;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+header h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+header h1 span{color:var(--blue)}
 
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
-      width: 100%;
-    }
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid}
+.badge.ok{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08)}
+.badge.warn{color:var(--yellow);border-color:rgba(234,179,8,.3);background:rgba(234,179,8,.08)}
+.badge.bad{color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.1)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
 
-    /* Header */
-    header {
-      border-bottom: 1px solid var(--border);
-      background: rgba(14, 19, 31, 0.75);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, #0284c7, #8b5cf6);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 20px;
-      color: white;
-      box-shadow: 0 4px 14px var(--primary-glow);
-    }
-    .brand-title {
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-    }
-    .brand-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 600;
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-head h2{font-size:15px;font-weight:700}
+.card-body{padding:20px}
 
-    /* Status badge pill */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .status-badge.normal { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
-    .status-badge.maintenance { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25); }
-    .status-badge.emergency { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: currentColor;
-    }
+/* Rows */
+.row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:16px}
+.row:last-child{border-bottom:none}
+.row-info{flex:1;min-width:0}
+.row-label{font-size:14px;font-weight:600}
+.row-help{font-size:11px;color:var(--dim);margin-top:1px}
+.row-file{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px;opacity:.7}
 
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin: 24px 0 20px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.15s ease;
-      white-space: nowrap;
-    }
-    .tab-btn:hover { color: var(--text-main); background: var(--bg-surface); }
-    .tab-btn.active {
-      color: var(--text-main);
-      background: var(--bg-card);
-      border-color: var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    }
+/* Toggle */
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .track{position:absolute;inset:0;background:var(--border);border-radius:99px;cursor:pointer;transition:.2s}
+.toggle .track::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle input:checked+.track{background:var(--blue)}
+.toggle input:checked+.track.danger{background:var(--red)}
+.toggle input:checked+.track::before{transform:translateX(20px)}
 
-    /* Metrics Grid */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .metric-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .metric-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-    .metric-val {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .metric-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
+/* Inputs */
+.input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px}
+.input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 2px rgba(59,130,246,.2)}
+.input.mono{font-family:var(--mono);font-size:12px}
+textarea.input{min-height:60px;resize:vertical}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-    /* Cards */
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 17px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .card-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{background:var(--card);border:1px solid var(--border);padding:3px 10px;border-radius:99px;font-size:11px;font-family:var(--mono);display:inline-flex;align-items:center;gap:5px}
+.chip b{cursor:pointer;color:var(--muted);font-size:14px;line-height:1}
+.chip b:hover{color:var(--red)}
 
-    /* Form rows & controls */
-    .control-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      gap: 20px;
-    }
-    .control-row:last-child { border-bottom: none; }
-    .control-info { flex: 1; }
-    .control-name { font-size: 15px; font-weight: 600; }
-    .control-help { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:var(--font);transition:.15s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:#0284c7}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
+.btn-ghost:hover{background:var(--card)}
+.btn-red{background:var(--red);color:#fff}
+.btn-sm{padding:5px 10px;font-size:11px}
 
-    /* Switch toggle */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 52px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--border);
-      transition: .25s ease;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .25s ease;
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    input:checked + .slider { background-color: var(--primary); }
-    input:checked + .slider.danger-slider { background-color: var(--danger); }
-    input:checked + .slider:before { transform: translateX(24px); }
+/* Bottom bar */
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(17,24,39,.95);border-top:1px solid var(--border);backdrop-filter:blur(12px);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;z-index:50}
 
-    /* Inputs */
-    .form-group {
-      margin-bottom: 16px;
-    }
-    .form-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .input-text, .textarea, .select {
-      width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 10px 14px;
-      color: var(--text-main);
-      font-family: var(--font-sans);
-      font-size: 14px;
-      transition: all 0.15s ease;
-    }
-    .input-text:focus, .textarea:focus, .select:focus {
-      outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--primary-glow);
-    }
-    .textarea {
-      min-height: 80px;
-      resize: vertical;
-      line-height: 1.4;
-    }
-    .input-mono {
-      font-family: var(--font-mono);
-      font-size: 13px;
-    }
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;place-items:center;z-index:100;padding:20px}
+.modal-bg.open{display:grid}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:520px;padding:24px}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:16px}
 
-    /* Chips container for blocked versions */
-    .chips-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .chip {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      font-size: 12px;
-      font-family: var(--font-mono);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .chip-remove {
-      cursor: pointer;
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1;
-    }
-    .chip-remove:hover { color: var(--danger); }
+/* Toast */
+.toast{position:fixed;bottom:70px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:.25s;z-index:200}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.15s ease;
-      border: 1px solid transparent;
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #0284c7);
-      color: white;
-      box-shadow: 0 4px 12px var(--primary-glow);
-    }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary {
-      background: var(--bg-card);
-      border-color: var(--border);
-      color: var(--text-main);
-    }
-    .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--text-dim); }
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-    .btn-danger:hover { background: var(--danger-hover); }
-    .btn-sm { padding: 6px 12px; font-size: 12px; }
+/* JSON preview */
+pre.preview{background:#060a12;border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:11px;color:#94a3b8;overflow-x:auto;max-height:200px}
 
-    /* Action bar */
-    .action-bar {
-      position: sticky;
-      bottom: 20px;
-      background: rgba(20, 27, 45, 0.95);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      z-index: 30;
-    }
-    .action-bar-info {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
-      display: none;
-      place-items: center;
-      z-index: 100;
-      padding: 20px;
-    }
-    .modal-backdrop.active { display: grid; }
-    .modal {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 580px;
-      padding: 28px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-      position: relative;
-    }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-    .modal-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 12px 18px;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all .25s ease;
-      z-index: 200;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-color: var(--success); color: var(--text-main); }
-    .toast.error { border-color: var(--danger); color: var(--danger); }
-
-    /* Diff / Code Preview */
-    pre.code-preview {
-      background: #080c14;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: #cbd5e1;
-      overflow-x: auto;
-      max-height: 220px;
-    }
-
-    @media (max-width: 768px) {
-      .header-inner { flex-direction: column; align-items: flex-start; }
-      .action-bar { flex-direction: column; align-items: stretch; text-align: center; }
-      .control-row { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.bar{flex-direction:column}}
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="header-inner">
-      <div class="brand">
-        <div class="brand-icon">TP</div>
-        <div>
-          <div class="brand-title">The Panels Hub</div>
-          <div class="brand-sub">Control Center — Web Console</div>
-        </div>
-      </div>
-      <div class="header-actions">
-        <div id="liveStatusBadge" class="status-badge normal">
-          <span class="status-dot"></span>
-          <span id="liveStatusText">Loading Live Policy...</span>
-        </div>
-        <button id="btnSettings" class="btn btn-secondary btn-sm" onclick="openCredentialsModal()">
-          ⚙️ Publisher Keys
-        </button>
-      </div>
-    </div>
-  </header>
+<div class="wrap">
 
-  <div class="container">
-
-    <!-- Product Navigation Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchProduct('panels-play')">Panels Play</button>
-      <button class="tab-btn" onclick="switchProduct('the-panels-streaming')">The Panels Streaming</button>
-      <button class="tab-btn" onclick="switchProduct('template')">Product Template</button>
-    </div>
-
-    <!-- Live Metrics Grid -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-label">Policy Status</div>
-        <div id="metricStatus" class="metric-val" style="color: var(--success);">Normal</div>
-        <div id="metricProduct" class="metric-sub">Product: panels-play</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Policy Revision</div>
-        <div id="metricRevision" class="metric-val">1</div>
-        <div id="metricIssued" class="metric-sub">Issued: Live on GitHub</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Min Supported Version</div>
-        <div id="metricMinVersion" class="metric-val">v1.0.0</div>
-        <div id="metricBlockedCount" class="metric-sub">0 versions blocked</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Latest Release</div>
-        <div id="metricLatestRelease" class="metric-val">v1.0.0</div>
-        <div id="metricBuildCode" class="metric-sub">Build Code: 141</div>
-      </div>
-    </div>
-
-    <!-- Section 1: Policy Governance Controls -->
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">🛡️ Policy & Kill Switch Controls</div>
-          <div class="card-desc">Control version gating, maintenance directives, and emergency shutdown flags.</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="fetchLivePolicy()">↻ Refresh from GitHub</button>
-      </div>
-
-      <!-- Maintenance Mode Toggle -->
-      <div class="control-row">
-        <div class="control-info">
-          <div class="control-name">Maintenance Mode</div>
-          <div class="control-help">Displays maintenance announcement without invalidating active user sessions.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="chkMaintenance" onchange="markDirty()">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="form-group" style="margin-top: 12px;">
-        <label class="form-label">Maintenance Banner Notice</label>
-        <input type="text" id="txtMaintenanceMsg" class="input-text" placeholder="Panels Play is undergoing scheduled maintenance. Please check back shortly." oninput="markDirty()">
-      </div>
-
-      <!-- Emergency Kill Switch Toggle -->
-      <div class="control-row">
-        <div class="control-info">
-          <div class="control-name" style="color: #f87171;">Emergency Lockdown (Product Kill Switch)</div>
-          <div class="control-help">Immediately blocks all application entry for this product with a priority stop barrier.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="chkEmergency" class="danger-slider" onchange="confirmEmergency(this)">
-          <span class="slider danger-slider"></span>
-        </label>
-      </div>
-
-      <!-- Global Emergency Kill Switch -->
-      <div class="control-row">
-        <div class="control-info">
-          <div class="control-name" style="color: #f87171;">Global Emergency Stop</div>
-          <div class="control-help">Organization-wide emergency directive across all products in The Panels Hub family.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="chkGlobalEmergency" class="danger-slider" onchange="markDirty()">
-          <span class="slider danger-slider"></span>
-        </label>
-      </div>
-
-      <!-- Custom User Message -->
-      <div class="form-group" style="margin-top: 16px;">
-        <label class="form-label">Custom Denial / Barrier Message (Optional)</label>
-        <input type="text" id="txtUserMessage" class="input-text" placeholder="Optional directive message to display to users..." oninput="markDirty()">
-      </div>
-
-      <!-- Version Retirement & Minimum Version -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-        <div class="form-group">
-          <label class="form-label">Minimum Required Version</label>
-          <input type="text" id="txtMinVersion" class="input-text input-mono" value="1.0.0" oninput="markDirty()">
-          <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Versions lower than this are blocked.</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Policy Expiration (UTC)</label>
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="txtExpiresAt" class="input-text input-mono" value="2027-10-14T00:00:00Z" oninput="markDirty()">
-            <button class="btn btn-secondary btn-sm" onclick="addYearsToExpiry(1)">+1 Year</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Blocked Versions Tags -->
-      <div class="form-group">
-        <label class="form-label">Blocked Specific Versions</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="txtNewBlockedVer" class="input-text input-mono" placeholder="e.g. 1.0.0-beta" style="max-width: 200px;">
-          <button class="btn btn-secondary btn-sm" onclick="addBlockedVersion()">+ Block Version</button>
-        </div>
-        <div id="blockedVersionsList" class="chips-container">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Section 2: Release & Update Metadata (update.json) -->
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">🚀 Release & APK Distribution (`update.json`)</div>
-          <div class="card-desc">Manage public download URLs, APK hashes, and in-app update notices.</div>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="form-group">
-          <label class="form-label">Latest Version Name</label>
-          <input type="text" id="txtUpdateVersion" class="input-text input-mono" value="1.0.0" oninput="markDirty()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Latest Version Code</label>
-          <input type="number" id="txtUpdateVersionCode" class="input-text input-mono" value="141" oninput="markDirty()">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Universal Release APK Download URL</label>
-        <input type="text" id="txtDownloadUrl" class="input-text input-mono" placeholder="https://github.com/ThePanelsHub/the-panels-streaming/releases/download/..." oninput="markDirty()">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">APK SHA-256 Checksum</label>
-        <input type="text" id="txtApkSha256" class="input-text input-mono" placeholder="64-character hex digest" oninput="markDirty()">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Release Notes</label>
-        <textarea id="txtReleaseNotes" class="textarea" placeholder="Release notes displayed to users..." oninput="markDirty()"></textarea>
-      </div>
-    </div>
-
-    <!-- Live Preview -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">📝 Real-Time Policy JSON Preview</div>
-        <button class="btn btn-secondary btn-sm" onclick="copyJsonPreview()">📋 Copy JSON</button>
-      </div>
-      <pre id="jsonPreview" class="code-preview"></pre>
-    </div>
-
-    <!-- Bottom Action Bar -->
-    <div class="action-bar">
-      <div class="action-bar-info">
-        <span id="txtChangesStatus">● Ready. Select "Sign & Publish" to push changes live to GitHub.</span>
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="downloadSignedJson()">💾 Download JSON</button>
-        <button id="btnPublish" class="btn btn-primary" onclick="signAndPublish()">
-          🚀 Sign & Publish to GitHub
-        </button>
-      </div>
-    </div>
-
+<header>
+  <h1><span>Panels Play</span> — Control Center</h1>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div id="statusBadge" class="badge ok"><span class="dot"></span><span id="statusText">Loading…</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="openModal()">⚙ Keys</button>
+    <button class="btn btn-ghost btn-sm" onclick="fetchLive()">↻ Refresh</button>
   </div>
+</header>
 
-  <!-- Publisher Credentials Modal -->
-  <div id="credentialsModal" class="modal-backdrop">
-    <div class="modal">
-      <div class="modal-title">⚙️ Publisher Keys & GitHub Access</div>
-      <div class="modal-desc">Configure your credentials once. They remain strictly in your browser and are never sent to any external server.</div>
-
-      <div class="form-group">
-        <label class="form-label">GitHub Personal Access Token (PAT)</label>
-        <input type="password" id="txtGithubToken" class="input-text input-mono" placeholder="ghp_... or github_pat_..." oninput="saveCredentials()">
-        <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Requires `repo` or `contents:write` scope for `ThePanelsHub/panels-control-center`.</div>
+<!-- ═══════════ SECTION 1: VERSION GOVERNANCE ═══════════ -->
+<div class="card">
+  <div class="card-head">
+    <h2>📦 Version Governance</h2>
+    <span style="font-size:11px;color:var(--dim)">Modifies: <code>products/panels-play/policy.json</code></span>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="row-info">
+        <div class="row-label">Minimum Required Version</div>
+        <div class="row-help">App versions below this are blocked from launching.</div>
+        <div class="row-file">→ policy.json → <code>policy.min_version</code></div>
       </div>
+      <input type="text" id="minVersion" class="input mono" style="width:120px" value="1.0.0" oninput="dirty()">
+    </div>
 
-      <div class="form-group">
-        <label class="form-label">Policy Ed25519 Private Key</label>
-        <div style="margin-bottom: 8px;">
-          <input type="file" id="fileKeyPicker" accept=".pem,.key,.txt" style="display:none;" onchange="handleKeyFileUpload(event)">
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('fileKeyPicker').click()">📁 Select .pem Key File</button>
-        </div>
-        <textarea id="txtPrivateKey" class="textarea input-mono" placeholder="Paste PEM format private key or raw 64-character hex..." oninput="saveCredentials()"></textarea>
-        <div id="keyVerificationNotice" style="font-size: 11px; color: var(--success); margin-top: 4px; display: none;">✓ Key loaded. Public key matches trusted app configuration.</div>
+    <div class="field" style="margin-top:14px">
+      <label>Block Specific Versions <span style="color:var(--dim);font-weight:400">→ policy.json → <code>policy.blocked_versions[]</code></span></label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="newBlock" class="input mono" placeholder="e.g. 1.0.0-beta" style="max-width:180px">
+        <button class="btn btn-ghost btn-sm" onclick="addBlock()">+ Block</button>
       </div>
+      <div id="blockChips" class="chips"><span style="font-size:11px;color:var(--dim)">None blocked</span></div>
+    </div>
 
-      <div class="form-group">
-        <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-          <input type="checkbox" id="chkRememberCreds" checked onchange="saveCredentials()">
-          Remember credentials in this browser (Local Storage)
-        </label>
-      </div>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-        <button class="btn btn-danger btn-sm" onclick="clearCredentials()">Clear Saved Credentials</button>
-        <button class="btn btn-primary" onclick="closeCredentialsModal()">Done</button>
+    <div class="field">
+      <label>Policy Expiration (UTC) <span style="color:var(--dim);font-weight:400">→ policy.json → <code>policy.expires_at</code></span></label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="expiresAt" class="input mono" value="2027-10-14T00:00:00Z" oninput="dirty()">
+        <button class="btn btn-ghost btn-sm" onclick="addYear()">+1yr</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Progress / Confirmation Toast -->
-  <div id="toast" class="toast">
-    <span id="toastIcon">✓</span>
-    <span id="toastMessage">Policy updated successfully!</span>
+<!-- ═══════════ SECTION 2: MAINTENANCE & EMERGENCY ═══════════ -->
+<div class="card">
+  <div class="card-head">
+    <h2>🛡️ Maintenance & Emergency</h2>
+    <span style="font-size:11px;color:var(--dim)">Modifies: <code>products/panels-play/policy.json</code></span>
   </div>
-
-  <script>
-    // Configuration & State
-    const REPO_OWNER = 'ThePanelsHub';
-    const REPO_NAME = 'panels-control-center';
-    const KNOWN_PUBLIC_KEYS = [
-      '5910d52a21f0b0cac77dbf16abf5f1b61c98666308bac0807aa38898765bff50',
-      '2f029fce662a015a2b13a0e0261eea6fb13aae7ba832e6a4c80f6026ef6b6db7'
-    ];
-
-    let currentProduct = 'panels-play';
-    let currentPolicyEnvelope = null;
-    let currentUpdateMetadata = null;
-    let blockedVersions = [];
-    let isDirty = false;
-
-    // Initialize
-    window.addEventListener('DOMContentLoaded', () => {
-      loadSavedCredentials();
-      switchProduct('panels-play');
-    });
-
-    function switchProduct(product) {
-      currentProduct = product;
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(product.replace('-', ' ')));
-      });
-      fetchLivePolicy();
-    }
-
-    async function fetchLivePolicy() {
-      updateLiveBadge('loading', 'Fetching from GitHub...');
-      const policyUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/products/${currentProduct}/policy.json?t=${Date.now()}`;
-      const updateUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/products/${currentProduct}/update.json?t=${Date.now()}`;
-
-      try {
-        const [pRes, uRes] = await Promise.all([fetch(policyUrl), fetch(updateUrl)]);
-        if (!pRes.ok) throw new Error(`HTTP ${pRes.status} fetching policy`);
-        currentPolicyEnvelope = await pRes.json();
-        currentUpdateMetadata = uRes.ok ? await uRes.json() : {};
-
-        populateUI();
-        updateLiveBadge('normal', 'Live on GitHub (Synced)');
-        showToast('Fetched latest live policy from GitHub!', 'success');
-      } catch (err) {
-        console.error('Fetch error:', err);
-        updateLiveBadge('maintenance', 'Offline / Local Draft');
-        showToast('Unable to fetch live policy: ' + err.message, 'error');
-      }
-    }
-
-    function populateUI() {
-      if (!currentPolicyEnvelope || !currentPolicyEnvelope.policy) return;
-      const pol = currentPolicyEnvelope.policy;
-      const upd = currentUpdateMetadata || {};
-
-      // Checkboxes & inputs
-      document.getElementById('chkMaintenance').checked = !!(pol.maintenance && pol.maintenance.enabled);
-      document.getElementById('txtMaintenanceMsg').value = (pol.maintenance && pol.maintenance.message) || '';
-      document.getElementById('chkEmergency').checked = !!pol.emergency_disabled;
-      document.getElementById('chkGlobalEmergency').checked = !!pol.global_emergency_disabled;
-      document.getElementById('txtUserMessage').value = pol.user_message || '';
-      document.getElementById('txtMinVersion').value = pol.min_version || '1.0.0';
-      document.getElementById('txtExpiresAt').value = pol.expires_at || '';
-
-      // Blocked versions
-      blockedVersions = [...(pol.blocked_versions || [])];
-      renderBlockedChips();
-
-      // Update metadata
-      document.getElementById('txtUpdateVersion').value = upd.latest_version || '1.0.0';
-      document.getElementById('txtUpdateVersionCode').value = upd.latest_version_code || 141;
-      document.getElementById('txtDownloadUrl').value = upd.download_url || '';
-      document.getElementById('txtApkSha256').value = upd.apk_sha256 || '';
-      document.getElementById('txtReleaseNotes').value = upd.release_notes || '';
-
-      // Metric Cards
-      document.getElementById('metricProduct').textContent = `Product: ${currentProduct}`;
-      document.getElementById('metricRevision').textContent = pol.revision || 1;
-      document.getElementById('metricMinVersion').textContent = `v${pol.min_version || '1.0.0'}`;
-      document.getElementById('metricLatestRelease').textContent = `v${upd.latest_version || '1.0.0'}`;
-      document.getElementById('metricBuildCode').textContent = `Build Code: ${upd.latest_version_code || 141}`;
-
-      updateStatusCardState();
-      updateJsonPreview();
-      isDirty = false;
-      document.getElementById('txtChangesStatus').textContent = `● Revision ${pol.revision} loaded from GitHub.`;
-    }
-
-    function updateStatusCardState() {
-      const isEmerg = document.getElementById('chkEmergency').checked || document.getElementById('chkGlobalEmergency').checked;
-      const isMaint = document.getElementById('chkMaintenance').checked;
-      const metric = document.getElementById('metricStatus');
-      const badge = document.getElementById('liveStatusBadge');
-      const badgeText = document.getElementById('liveStatusText');
-
-      if (isEmerg) {
-        metric.textContent = 'Emergency Stop';
-        metric.style.color = 'var(--danger)';
-        badge.className = 'status-badge emergency';
-        badgeText.textContent = 'Emergency Lockdown';
-      } else if (isMaint) {
-        metric.textContent = 'Maintenance';
-        metric.style.color = 'var(--warning)';
-        badge.className = 'status-badge maintenance';
-        badgeText.textContent = 'Maintenance Mode';
-      } else {
-        metric.textContent = 'Normal';
-        metric.style.color = 'var(--success)';
-        badge.className = 'status-badge normal';
-        badgeText.textContent = 'Operational';
-      }
-    }
-
-    function renderBlockedChips() {
-      const container = document.getElementById('blockedVersionsList');
-      container.innerHTML = '';
-      if (blockedVersions.length === 0) {
-        container.innerHTML = '<span style="font-size:12px;color:var(--text-dim);">No versions blocked</span>';
-        document.getElementById('metricBlockedCount').textContent = '0 versions blocked';
-        return;
-      }
-      blockedVersions.forEach((ver, idx) => {
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        chip.innerHTML = `<span>${ver}</span><span class="chip-remove" onclick="removeBlockedVersion(${idx})">&times;</span>`;
-        container.appendChild(chip);
-      });
-      document.getElementById('metricBlockedCount').textContent = `${blockedVersions.length} versions blocked`;
-    }
-
-    function addBlockedVersion() {
-      const input = document.getElementById('txtNewBlockedVer');
-      const val = input.value.trim();
-      if (val && !blockedVersions.includes(val)) {
-        blockedVersions.push(val);
-        input.value = '';
-        renderBlockedChips();
-        markDirty();
-      }
-    }
-
-    function removeBlockedVersion(idx) {
-      blockedVersions.splice(idx, 1);
-      renderBlockedChips();
-      markDirty();
-    }
-
-    function addYearsToExpiry(years) {
-      const input = document.getElementById('txtExpiresAt');
-      try {
-        const d = new Date(input.value || Date.now());
-        d.setFullYear(d.getFullYear() + years);
-        input.value = d.toISOString().replace(/\.\d{3}Z$/, 'Z');
-        markDirty();
-      } catch (e) {
-        showToast('Invalid date in Expiry field', 'error');
-      }
-    }
-
-    function confirmEmergency(checkbox) {
-      if (checkbox.checked) {
-        if (!confirm('🚨 WARNING: You are activating the EMERGENCY KILL SWITCH.\nThis will immediately halt client streaming for all users.\nAre you sure you want to proceed?')) {
-          checkbox.checked = false;
-        }
-      }
-      markDirty();
-    }
-
-    function markDirty() {
-      isDirty = true;
-      updateStatusCardState();
-      updateJsonPreview();
-      document.getElementById('txtChangesStatus').textContent = `● Unsaved changes. Click "Sign & Publish" to push revision to GitHub.`;
-    }
-
-    function buildCurrentPolicyPayload(incrementRevision = false) {
-      const currentRev = (currentPolicyEnvelope && currentPolicyEnvelope.policy && currentPolicyEnvelope.policy.revision) || 1;
-      return {
-        revision: incrementRevision ? currentRev + 1 : currentRev,
-        issued_at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
-        expires_at: document.getElementById('txtExpiresAt').value.trim(),
-        min_version: document.getElementById('txtMinVersion').value.trim(),
-        blocked_versions: [...blockedVersions],
-        maintenance: {
-          enabled: document.getElementById('chkMaintenance').checked,
-          message: document.getElementById('txtMaintenanceMsg').value.trim()
-        },
-        emergency_disabled: document.getElementById('chkEmergency').checked,
-        global_emergency_disabled: document.getElementById('chkGlobalEmergency').checked,
-        user_message: document.getElementById('txtUserMessage').value.trim() || null
-      };
-    }
-
-    function buildCurrentUpdatePayload() {
-      return {
-        schema_version: "1.0",
-        product_id: currentProduct,
-        latest_version: document.getElementById('txtUpdateVersion').value.trim(),
-        latest_version_code: parseInt(document.getElementById('txtUpdateVersionCode').value, 10) || 141,
-        min_supported_version: document.getElementById('txtMinVersion').value.trim(),
-        mandatory: false,
-        release_date: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
-        release_notes: document.getElementById('txtReleaseNotes').value.trim(),
-        download_url: document.getElementById('txtDownloadUrl').value.trim(),
-        apk_sha256: document.getElementById('txtApkSha256').value.trim().toLowerCase()
-      };
-    }
-
-    // Exact RFC 8785 / Python json.dumps(sort_keys=True, separators=(',', ':')) canonicalizer
-    function canonicalizeJson(obj) {
-      if (obj === null || typeof obj !== 'object') {
-        return JSON.stringify(obj);
-      }
-      if (Array.isArray(obj)) {
-        return '[' + obj.map(canonicalizeJson).join(',') + ']';
-      }
-      const sortedKeys = Object.keys(obj).sort();
-      const items = sortedKeys.map(k => JSON.stringify(k) + ':' + canonicalizeJson(obj[k]));
-      return '{' + items.join(',') + '}';
-    }
-
-    function updateJsonPreview() {
-      const payload = buildCurrentPolicyPayload(false);
-      const envelope = {
-        schema_version: "1.0",
-        product_id: currentProduct,
-        policy: payload,
-        signature: (currentPolicyEnvelope && currentPolicyEnvelope.signature) || {
-          algorithm: "ed25519",
-          public_key: KNOWN_PUBLIC_KEYS[0],
-          signature_hex: "Generated at publish time"
-        }
-      };
-      document.getElementById('jsonPreview').textContent = JSON.stringify(envelope, null, 2);
-    }
-
-    function copyJsonPreview() {
-      navigator.clipboard.writeText(document.getElementById('jsonPreview').textContent);
-      showToast('Copied JSON preview to clipboard!', 'success');
-    }
-
-    // Cryptography — Extract 32-byte seed from PEM or Hex
-    function extractSeedBytes(rawInput) {
-      const trimmed = rawInput.trim();
-      if (!trimmed) throw new Error('Private key is empty');
-
-      if (trimmed.includes('BEGIN')) {
-        const b64 = trimmed.split('\n')
-          .map(l => l.trim())
-          .filter(l => !l.startsWith('---') && l.length > 0)
-          .join('');
-        const binary = atob(b64);
-        const der = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) der[i] = binary.charCodeAt(i);
-        // PKCS#8 Ed25519 stores the 32-byte seed in the last 32 bytes of the DER encoding
-        if (der.length < 32) throw new Error('Invalid PEM private key length');
-        return der.slice(-32);
-      }
-
-      // Raw hex string
-      const cleanHex = trimmed.replace(/[^0-9a-fA-F]/g, '');
-      if (cleanHex.length === 64) {
-        const bytes = new Uint8Array(32);
-        for (let i = 0; i < 32; i++) bytes[i] = parseInt(cleanHex.substr(i * 2, 2), 16);
-        return bytes;
-      }
-      if (cleanHex.length === 128) {
-        // 64-byte secret key: seed is first 32 bytes
-        const bytes = new Uint8Array(32);
-        for (let i = 0; i < 32; i++) bytes[i] = parseInt(cleanHex.substr(i * 2, 2), 16);
-        return bytes;
-      }
-
-      throw new Error('Unrecognized private key format. Provide a .pem file or 64-char hex seed.');
-    }
-
-    function bytesToHex(bytes) {
-      return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Sign and produce envelope
-    function generateSignedEnvelope(incrementRevision = true) {
-      if (typeof nacl === 'undefined' || !nacl.sign) {
-        throw new Error('TweetNaCl cryptography library is not loaded');
-      }
-
-      const keyInput = document.getElementById('txtPrivateKey').value.trim();
-      if (!keyInput) throw new Error('Missing Policy Private Key. Click "Publisher Keys" to configure.');
-
-      const seed = extractSeedBytes(keyInput);
-      const keyPair = nacl.sign.keyPair.fromSeed(seed);
-      const pubKeyHex = bytesToHex(keyPair.publicKey);
-
-      const policyPayload = buildCurrentPolicyPayload(incrementRevision);
-      const canonString = canonicalizeJson(policyPayload);
-      const encoder = new TextEncoder();
-      const canonBytes = encoder.encode(canonString);
-
-      const signatureBytes = nacl.sign.detached(canonBytes, keyPair.secretKey);
-      const signatureHex = bytesToHex(signatureBytes);
-
-      return {
-        schema_version: "1.0",
-        product_id: currentProduct,
-        policy: policyPayload,
-        signature: {
-          algorithm: "ed25519",
-          public_key: pubKeyHex,
-          signature_hex: signatureHex
-        }
-      };
-    }
-
-    // 1-Click Publish to GitHub via Contents API
-    async function signAndPublish() {
-      const btn = document.getElementById('btnPublish');
-      const ghToken = document.getElementById('txtGithubToken').value.trim();
-
-      if (!ghToken) {
-        openCredentialsModal();
-        showToast('Please enter your GitHub Personal Access Token to publish', 'error');
-        return;
-      }
-
-      try {
-        btn.disabled = true;
-        btn.textContent = 'Signing policy...';
-
-        const signedEnvelope = generateSignedEnvelope(true);
-        const updatePayload = buildCurrentUpdatePayload();
-        const newRev = signedEnvelope.policy.revision;
-
-        btn.textContent = 'Connecting to GitHub...';
-
-        // 1. Fetch current file SHA for policy.json
-        const policyPath = `products/${currentProduct}/policy.json`;
-        const updatePath = `products/${currentProduct}/update.json`;
-
-        const [policySha, updateSha] = await Promise.all([
-          getFileSha(policyPath, ghToken),
-          getFileSha(updatePath, ghToken)
-        ]);
-
-        btn.textContent = 'Pushing policy.json...';
-        await putGithubFile(
-          policyPath,
-          JSON.stringify(signedEnvelope, null, 2),
-          `chore(policy): update ${currentProduct} policy to revision ${newRev}`,
-          policySha,
-          ghToken
-        );
-
-        btn.textContent = 'Pushing update.json...';
-        await putGithubFile(
-          updatePath,
-          JSON.stringify(updatePayload, null, 2),
-          `chore(release): update ${currentProduct} release metadata to v${updatePayload.latest_version}`,
-          updateSha,
-          ghToken
-        );
-
-        // Update local state
-        currentPolicyEnvelope = signedEnvelope;
-        currentUpdateMetadata = updatePayload;
-        populateUI();
-
-        showToast(`🎉 Successfully published Revision ${newRev} to GitHub!`, 'success');
-      } catch (err) {
-        console.error('Publish error:', err);
-        showToast('Publish failed: ' + err.message, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🚀 Sign & Publish to GitHub';
-      }
-    }
-
-    async function getFileSha(path, token) {
-      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error(`GitHub API error ${res.status} checking ${path}`);
-      const data = await res.json();
-      return data.sha;
-    }
-
-    async function putGithubFile(path, content, message, sha, token) {
-      const encoder = new TextEncoder();
-      const contentBytes = encoder.encode(content);
-      let binary = '';
-      for (let i = 0; i < contentBytes.length; i++) binary += String.fromCharCode(contentBytes[i]);
-      const contentBase64 = btoa(binary);
-
-      const body = { message, content: contentBase64 };
-      if (sha) body.sha = sha;
-
-      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || `HTTP ${res.status} committing ${path}`);
-      }
-    }
-
-    // Offline / Manual Download
-    function downloadSignedJson() {
-      try {
-        const signedEnvelope = generateSignedEnvelope(false);
-        const blob = new Blob([JSON.stringify(signedEnvelope, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `policy-${currentProduct}-rev${signedEnvelope.policy.revision}.json`;
-        a.click();
-        showToast('Downloaded signed policy JSON!', 'success');
-      } catch (e) {
-        showToast('Cannot sign: ' + e.message, 'error');
-      }
-    }
-
-    // Credentials Modal & Storage
-    function openCredentialsModal() {
-      document.getElementById('credentialsModal').classList.add('active');
-    }
-    function closeCredentialsModal() {
-      document.getElementById('credentialsModal').classList.remove('active');
-    }
-
-    function handleKeyFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        document.getElementById('txtPrivateKey').value = event.target.result;
-        saveCredentials();
-      };
-      reader.readAsText(file);
-    }
-
-    function saveCredentials() {
-      const remember = document.getElementById('chkRememberCreds').checked;
-      const token = document.getElementById('txtGithubToken').value.trim();
-      const key = document.getElementById('txtPrivateKey').value.trim();
-
-      if (remember) {
-        if (token) localStorage.setItem('panels_control_gh_token', token);
-        if (key) localStorage.setItem('panels_control_priv_key', key);
-      }
-
-      // Check key validity
-      try {
-        if (key) {
-          const seed = extractSeedBytes(key);
-          const keyPair = nacl.sign.keyPair.fromSeed(seed);
-          const pubHex = bytesToHex(keyPair.publicKey);
-          const notice = document.getElementById('keyVerificationNotice');
-          notice.style.display = 'block';
-          notice.textContent = `✓ Public Key: ${pubHex.substr(0, 16)}... (Valid Ed25519 Key)`;
-        }
-      } catch (e) {
-        const notice = document.getElementById('keyVerificationNotice');
-        notice.style.display = 'none';
-      }
-    }
-
-    function loadSavedCredentials() {
-      const token = localStorage.getItem('panels_control_gh_token');
-      const key = localStorage.getItem('panels_control_priv_key');
-      if (token) document.getElementById('txtGithubToken').value = token;
-      if (key) {
-        document.getElementById('txtPrivateKey').value = key;
-        saveCredentials();
-      }
-    }
-
-    function clearCredentials() {
-      localStorage.removeItem('panels_control_gh_token');
-      localStorage.removeItem('panels_control_priv_key');
-      document.getElementById('txtGithubToken').value = '';
-      document.getElementById('txtPrivateKey').value = '';
-      document.getElementById('keyVerificationNotice').style.display = 'none';
-      showToast('Cleared saved credentials from browser storage', 'success');
-    }
-
-    // Notifications
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toast');
-      const msgEl = document.getElementById('toastMessage');
-      const icon = document.getElementById('toastIcon');
-
-      msgEl.textContent = msg;
-      toast.className = `toast show ${type}`;
-      icon.textContent = type === 'success' ? '✓' : '⚠️';
-
-      setTimeout(() => {
-        toast.className = 'toast';
-      }, 4000);
-    }
-
-    function updateLiveBadge(state, text) {
-      const badge = document.getElementById('liveStatusBadge');
-      const txt = document.getElementById('liveStatusText');
-      txt.textContent = text;
-      badge.className = `status-badge ${state}`;
-    }
-  </script>
+  <div class="card-body">
+    <div class="row">
+      <div class="row-info">
+        <div class="row-label">Maintenance Mode</div>
+        <div class="row-help">Shows a maintenance banner. Users keep their sessions.</div>
+        <div class="row-file">→ policy.json → <code>policy.maintenance.enabled</code></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="chkMaint" onchange="dirty()"><span class="track"></span></label>
+    </div>
+
+    <div class="field" style="margin-top:8px">
+      <label>Maintenance Banner Text <span style="color:var(--dim);font-weight:400">→ <code>policy.maintenance.message</code></span></label>
+      <input type="text" id="maintMsg" class="input" placeholder="Panels Play is undergoing scheduled maintenance." oninput="dirty()">
+    </div>
+
+    <div class="row">
+      <div class="row-info">
+        <div class="row-label" style="color:var(--red)">🚨 Emergency Kill Switch</div>
+        <div class="row-help">Immediately blocks all Panels Play launches with an emergency barrier.</div>
+        <div class="row-file">→ policy.json → <code>policy.emergency_disabled</code></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="chkEmerg" onchange="confirmEmerg(this)"><span class="track danger"></span></label>
+    </div>
+
+    <div class="row">
+      <div class="row-info">
+        <div class="row-label" style="color:var(--red)">🌐 Global Emergency Stop</div>
+        <div class="row-help">Organization-wide emergency directive across all products.</div>
+        <div class="row-file">→ policy.json → <code>policy.global_emergency_disabled</code></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="chkGlobal" onchange="dirty()"><span class="track danger"></span></label>
+    </div>
+
+    <div class="field" style="margin-top:8px">
+      <label>Custom Denial Message (optional) <span style="color:var(--dim);font-weight:400">→ <code>policy.user_message</code></span></label>
+      <input type="text" id="userMsg" class="input" placeholder="Optional text shown when users are blocked…" oninput="dirty()">
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 3: RELEASE METADATA ═══════════ -->
+<div class="card">
+  <div class="card-head">
+    <h2>🚀 Release & APK Distribution</h2>
+    <span style="font-size:11px;color:var(--dim)">Modifies: <code>products/panels-play/update.json</code></span>
+  </div>
+  <div class="card-body">
+    <div class="grid2">
+      <div class="field">
+        <label>Latest Version Name <span style="color:var(--dim);font-weight:400">→ <code>latest_version</code></span></label>
+        <input type="text" id="updVer" class="input mono" value="1.0.0" oninput="dirty()">
+      </div>
+      <div class="field">
+        <label>Latest Version Code <span style="color:var(--dim);font-weight:400">→ <code>latest_version_code</code></span></label>
+        <input type="number" id="updCode" class="input mono" value="141" oninput="dirty()">
+      </div>
+    </div>
+    <div class="field">
+      <label>APK Download URL <span style="color:var(--dim);font-weight:400">→ <code>download_url</code></span></label>
+      <input type="text" id="updUrl" class="input mono" placeholder="https://github.com/ThePanelsHub/…/PanelsPlay-v1.0.0-universal-release.apk" oninput="dirty()">
+    </div>
+    <div class="field">
+      <label>APK SHA-256 Checksum <span style="color:var(--dim);font-weight:400">→ <code>apk_sha256</code></span></label>
+      <input type="text" id="updSha" class="input mono" placeholder="64-character hex digest" oninput="dirty()">
+    </div>
+    <div class="field">
+      <label>Release Notes <span style="color:var(--dim);font-weight:400">→ <code>release_notes</code></span></label>
+      <textarea id="updNotes" class="input" placeholder="Changelog shown to users…" oninput="dirty()"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 4: JSON PREVIEW ═══════════ -->
+<div class="card">
+  <div class="card-head">
+    <h2>📝 Live JSON Preview</h2>
+    <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('preview').textContent);toast('Copied!','ok')">📋 Copy</button>
+  </div>
+  <div class="card-body">
+    <pre id="preview" class="preview"></pre>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- Bottom Action Bar -->
+<div class="bar">
+  <button class="btn btn-ghost" onclick="downloadJson()">💾 Download Signed JSON</button>
+  <button id="pubBtn" class="btn btn-blue" onclick="publish()">🚀 Sign & Publish to GitHub</button>
+</div>
+
+<!-- Keys Modal -->
+<div id="modal" class="modal-bg">
+<div class="modal">
+  <h3>⚙ Publisher Keys & GitHub Token</h3>
+  <p>These stay in your browser only. Never sent to any server except GitHub when you click Publish.</p>
+  <div class="field">
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="ghToken" class="input mono" placeholder="ghp_… or github_pat_…" oninput="saveCreds()">
+    <div style="font-size:10px;color:var(--dim);margin-top:2px">Needs <code>repo</code> or <code>contents:write</code> scope on <code>ThePanelsHub/panels-control-center</code>.</div>
+  </div>
+  <div class="field">
+    <label>Policy Ed25519 Private Key</label>
+    <input type="file" id="keyFile" accept=".pem,.key,.txt" style="display:none" onchange="loadKeyFile(event)">
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('keyFile').click()" style="margin-bottom:6px">📁 Select .pem file</button>
+    <textarea id="privKey" class="input mono" rows="3" placeholder="Paste PEM private key or 64-char hex seed…" oninput="saveCreds()"></textarea>
+    <div id="keyStatus" style="font-size:10px;color:var(--green);margin-top:2px;display:none"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button class="btn btn-red btn-sm" onclick="clearCreds()">Clear Saved</button>
+    <button class="btn btn-blue" onclick="closeModal()">Done</button>
+  </div>
+</div>
+</div>
+
+<div id="toastEl" class="toast"><span id="toastMsg"></span></div>
+
+<script>
+const OWNER='ThePanelsHub',REPO='panels-control-center',PRODUCT='panels-play';
+const POLICY_PATH=`products/${PRODUCT}/policy.json`;
+const UPDATE_PATH=`products/${PRODUCT}/update.json`;
+let envelope=null,update=null,blocked=[];
+
+window.addEventListener('DOMContentLoaded',()=>{loadCreds();fetchLive()});
+
+// ── Fetch live from GitHub ──
+async function fetchLive(){
+  setBadge('warn','Fetching…');
+  try{
+    const[pR,uR]=await Promise.all([
+      fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${POLICY_PATH}?t=${Date.now()}`),
+      fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${UPDATE_PATH}?t=${Date.now()}`)
+    ]);
+    if(!pR.ok)throw new Error('HTTP '+pR.status);
+    envelope=await pR.json();update=uR.ok?await uR.json():{};
+    populateUI();setBadge('ok','Synced');toast('Live policy loaded','ok');
+  }catch(e){setBadge('bad','Offline');toast('Fetch failed: '+e.message,'err')}
+}
+
+function populateUI(){
+  if(!envelope||!envelope.policy)return;
+  const p=envelope.policy,u=update||{};
+  el('minVersion').value=p.min_version||'1.0.0';
+  el('expiresAt').value=p.expires_at||'';
+  el('chkMaint').checked=!!(p.maintenance&&p.maintenance.enabled);
+  el('maintMsg').value=(p.maintenance&&p.maintenance.message)||'';
+  el('chkEmerg').checked=!!p.emergency_disabled;
+  el('chkGlobal').checked=!!p.global_emergency_disabled;
+  el('userMsg').value=p.user_message||'';
+  blocked=[...(p.blocked_versions||[])];renderChips();
+  el('updVer').value=u.latest_version||'1.0.0';
+  el('updCode').value=u.latest_version_code||141;
+  el('updUrl').value=u.download_url||'';
+  el('updSha').value=u.apk_sha256||'';
+  el('updNotes').value=u.release_notes||'';
+  updatePreview();updateBadgeState();
+}
+
+// ── Build payloads ──
+function buildPolicy(bump){
+  const rev=(envelope&&envelope.policy&&envelope.policy.revision)||1;
+  return{
+    revision:bump?rev+1:rev,
+    issued_at:new Date().toISOString().replace(/\.\d{3}Z$/,'Z'),
+    expires_at:el('expiresAt').value.trim(),
+    min_version:el('minVersion').value.trim(),
+    blocked_versions:[...blocked],
+    maintenance:{enabled:el('chkMaint').checked,message:el('maintMsg').value.trim()},
+    emergency_disabled:el('chkEmerg').checked,
+    global_emergency_disabled:el('chkGlobal').checked,
+    user_message:el('userMsg').value.trim()||null
+  };
+}
+function buildUpdate(){
+  return{
+    schema_version:"1.0",product_id:PRODUCT,
+    latest_version:el('updVer').value.trim(),
+    latest_version_code:parseInt(el('updCode').value,10)||141,
+    min_supported_version:el('minVersion').value.trim(),
+    mandatory:false,
+    release_date:new Date().toISOString().replace(/\.\d{3}Z$/,'Z'),
+    release_notes:el('updNotes').value.trim(),
+    download_url:el('updUrl').value.trim(),
+    apk_sha256:el('updSha').value.trim().toLowerCase()
+  };
+}
+
+// ── Canonicalize (RFC 8785 / Python json.dumps sort_keys compact) ──
+function canon(o){
+  if(o===null||typeof o!=='object')return JSON.stringify(o);
+  if(Array.isArray(o))return'['+o.map(canon).join(',')+']';
+  return'{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}';
+}
+
+// ── Ed25519 Signing ──
+function extractSeed(raw){
+  const t=raw.trim();
+  if(t.includes('BEGIN')){
+    const b64=t.split('\n').map(l=>l.trim()).filter(l=>!l.startsWith('---')&&l).join('');
+    const bin=atob(b64);const der=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)der[i]=bin.charCodeAt(i);
+    if(der.length<32)throw new Error('Invalid PEM');
+    return der.slice(-32);
+  }
+  const hex=t.replace(/[^0-9a-fA-F]/g,'');
+  if(hex.length>=64){const b=new Uint8Array(32);for(let i=0;i<32;i++)b[i]=parseInt(hex.substr(i*2,2),16);return b}
+  throw new Error('Unrecognized key format');
+}
+function toHex(b){return Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join('')}
+
+function signEnvelope(bump){
+  const key=el('privKey').value.trim();
+  if(!key)throw new Error('No private key configured. Click ⚙ Keys.');
+  const seed=extractSeed(key);const kp=nacl.sign.keyPair.fromSeed(seed);
+  const policy=buildPolicy(bump);
+  const msg=new TextEncoder().encode(canon(policy));
+  const sig=nacl.sign.detached(msg,kp.secretKey);
+  return{
+    schema_version:"1.0",product_id:PRODUCT,policy,
+    signature:{algorithm:"ed25519",public_key:toHex(kp.publicKey),signature_hex:toHex(sig)}
+  };
+}
+
+// ── GitHub API (direct push, no Actions) ──
+async function ghSha(path,token){
+  const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{
+    headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github.v3+json'}
+  });
+  if(r.status===404)return null;if(!r.ok)throw new Error('GitHub '+r.status);
+  return(await r.json()).sha;
+}
+async function ghPut(path,content,msg,sha,token){
+  const b64=btoa(unescape(encodeURIComponent(content)));
+  const body={message:msg,content:b64};if(sha)body.sha=sha;
+  const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{
+    method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||'HTTP '+r.status)}
+}
+
+async function publish(){
+  const btn=el('pubBtn'),token=el('ghToken').value.trim();
+  if(!token){openModal();return toast('Enter GitHub token first','err')}
+  try{
+    btn.disabled=true;btn.textContent='Signing…';
+    const signed=signEnvelope(true);const upd=buildUpdate();
+    btn.textContent='Pushing policy.json…';
+    const[pSha,uSha]=await Promise.all([ghSha(POLICY_PATH,token),ghSha(UPDATE_PATH,token)]);
+    await ghPut(POLICY_PATH,JSON.stringify(signed,null,2),
+      `policy: update panels-play to revision ${signed.policy.revision}`,pSha,token);
+    btn.textContent='Pushing update.json…';
+    await ghPut(UPDATE_PATH,JSON.stringify(upd,null,2),
+      `release: update panels-play to v${upd.latest_version}`,uSha,token);
+    envelope=signed;update=upd;populateUI();
+    toast(`✅ Published revision ${signed.policy.revision}!`,'ok');
+  }catch(e){toast('Publish failed: '+e.message,'err')}
+  finally{btn.disabled=false;btn.textContent='🚀 Sign & Publish to GitHub'}
+}
+
+function downloadJson(){
+  try{
+    const s=signEnvelope(false);
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));
+    a.download=`policy-rev${s.policy.revision}.json`;a.click();toast('Downloaded!','ok');
+  }catch(e){toast(e.message,'err')}
+}
+
+// ── UI Helpers ──
+function el(id){return document.getElementById(id)}
+function dirty(){updatePreview();updateBadgeState()}
+
+function addBlock(){
+  const v=el('newBlock').value.trim();
+  if(v&&!blocked.includes(v)){blocked.push(v);el('newBlock').value='';renderChips();dirty()}
+}
+function rmBlock(i){blocked.splice(i,1);renderChips();dirty()}
+function renderChips(){
+  const c=el('blockChips');c.innerHTML='';
+  if(!blocked.length){c.innerHTML='<span style="font-size:11px;color:var(--dim)">None blocked</span>';return}
+  blocked.forEach((v,i)=>{const d=document.createElement('div');d.className='chip';
+    d.innerHTML=`${v} <b onclick="rmBlock(${i})">&times;</b>`;c.appendChild(d)});
+}
+function addYear(){
+  try{const d=new Date(el('expiresAt').value||Date.now());d.setFullYear(d.getFullYear()+1);
+    el('expiresAt').value=d.toISOString().replace(/\.\d{3}Z$/,'Z');dirty()}catch(e){}
+}
+function confirmEmerg(cb){
+  if(cb.checked&&!confirm('🚨 EMERGENCY KILL SWITCH\nThis will immediately halt Panels Play for ALL users.\nProceed?'))cb.checked=false;
+  dirty();
+}
+function updateBadgeState(){
+  const e=el('chkEmerg').checked||el('chkGlobal').checked,m=el('chkMaint').checked;
+  if(e)setBadge('bad','Emergency');else if(m)setBadge('warn','Maintenance');else setBadge('ok','Operational');
+}
+function updatePreview(){
+  try{const p=buildPolicy(false);
+    const env={schema_version:"1.0",product_id:PRODUCT,policy:p,
+      signature:(envelope&&envelope.signature)||{algorithm:"ed25519",public_key:"…",signature_hex:"generated at publish"}};
+    el('preview').textContent=JSON.stringify(env,null,2);
+  }catch(e){el('preview').textContent='Error: '+e.message}
+}
+function setBadge(cls,txt){
+  const b=el('statusBadge');b.className='badge '+cls;el('statusText').textContent=txt;
+}
+function toast(msg,type){
+  const t=el('toastEl');el('toastMsg').textContent=msg;
+  t.className='toast show '+(type||'ok');setTimeout(()=>t.className='toast',3500);
+}
+
+// ── Credentials (localStorage) ──
+function openModal(){el('modal').classList.add('open')}
+function closeModal(){el('modal').classList.remove('open')}
+function loadKeyFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=ev=>{el('privKey').value=ev.target.result;saveCreds()};r.readAsText(f)}
+function saveCreds(){
+  localStorage.setItem('pcc_token',el('ghToken').value);
+  localStorage.setItem('pcc_key',el('privKey').value);
+  try{if(el('privKey').value.trim()){
+    const s=extractSeed(el('privKey').value);const kp=nacl.sign.keyPair.fromSeed(s);
+    const st=el('keyStatus');st.style.display='block';
+    st.textContent='✓ Valid key → Public: '+toHex(kp.publicKey).substring(0,20)+'…';
+  }}catch(e){el('keyStatus').style.display='none'}
+}
+function loadCreds(){
+  const t=localStorage.getItem('pcc_token'),k=localStorage.getItem('pcc_key');
+  if(t)el('ghToken').value=t;if(k){el('privKey').value=k;saveCreds()}
+}
+function clearCreds(){
+  localStorage.removeItem('pcc_token');localStorage.removeItem('pcc_key');
+  el('ghToken').value='';el('privKey').value='';el('keyStatus').style.display='none';
+  toast('Credentials cleared','ok');
+}
+</script>
 </body>
 </html>
