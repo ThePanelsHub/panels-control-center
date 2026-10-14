@@ -2,13 +2,13 @@
   "schema_version": "1.0",
   "product_id": "panels-play",
   "policy": {
-    "revision": 2,
-    "issued_at": "2026-10-14T15:18:25Z",
+    "revision": 3,
+    "issued_at": "2026-10-14T15:21:26Z",
     "expires_at": "2027-10-13T00:00:00Z",
     "min_version": "1.0.0",
     "blocked_versions": [],
     "maintenance": {
-      "enabled": true,
+      "enabled": false,
       "message": "Panels Play is temporarily undergoing scheduled maintenance. Please check back shortly."
     },
     "emergency_disabled": false,
@@ -18,6 +18,6 @@
   "signature": {
     "algorithm": "ed25519",
     "public_key": "5910d52a21f0b0cac77dbf16abf5f1b61c98666308bac0807aa38898765bff50",
-    "signature_hex": "394f383b53cf77f6a0291934e7a5e6a3281d81096ccc81b8d09a27ea02c95fe77331cff0dbf385ae40d403a60a75299eec44375610ad7fef966693281b90900f"
+    "signature_hex": "8a28a272b33ebe8340b465af8e243a7ced09b8343f472cc895d4e1a2430a0d31af502c11c8fddabbb46036f0787f2fab758e85e620554645566941791fb3840c"
   }
 }
