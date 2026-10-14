@@ -18,9 +18,14 @@ panels-control-center/
 ├── .github/workflows/
 │   └── validate_and_deploy.yml         # CI verification of signatures & schemas
 ├── docs/
+│   ├── THE-PANELS-HUB-COMPLETE-GUIDE.md # Complete Beginner's & Operations Guide
+│   ├── DAILY-OPERATIONS-CHECKLIST.md   # Quick daily operations & incident response checklist
 │   ├── OPERATOR_GUIDE.md               # Step-by-step instructions for blocking/unblocking versions
 │   └── SECURITY.md                     # Ed25519 specification & key management rules
 ├── products/
+│   ├── panels-play/
+│   │   ├── policy.json                 # Signed version policy & kill switches for Panels Play
+│   │   └── update.json                 # Release metadata & APK download link
 │   ├── the-panels-streaming/
 │   │   ├── policy.json                 # Signed version policy & kill switches
 │   │   └── update.json                 # Release metadata & APK download link

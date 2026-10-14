@@ -17,7 +17,7 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "2f029fce662a015a2b13a0e0261eea6fb13aae7ba832e6a4c80f6026ef6b6db7",
-    "signature_hex": "86d9e6e61e517ec0d9b0a72728cf3b86ee7e48a2a6cd4c29afeba2b8970e7f5c4f4c335fc05d2189b6380af3e5085aedc9501ce449c3bf141257414730503703"
+    "public_key": "5910d52a21f0b0cac77dbf16abf5f1b61c98666308bac0807aa38898765bff50",
+    "signature_hex": "1a9d03edff07ba9135e916f0fba3bac3f61c8ff5062f3ae24a44987481f6493e29347c2a336dcd0ece58b7ed961cf9efae596420c26fec92d88a69c544a7e10e"
   }
 }

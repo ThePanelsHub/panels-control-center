@@ -14,14 +14,25 @@ from cryptography.hazmat.primitives import serialization
 def canonical_bytes(policy_dict):
     return json.dumps(policy_dict, sort_keys=True, separators=(',', ':')).encode('utf-8')
 
-def sign_file(policy_file_path, private_key_hex):
+def load_private_key(key_input):
+    key_str = key_input.strip()
+    if os.path.exists(key_str):
+        with open(key_str, 'rb') as f:
+            content = f.read()
+        if b'BEGIN' in content:
+            return serialization.load_pem_private_key(content, password=None)
+        else:
+            return ed25519.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(content.decode().strip()))
+    return ed25519.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(key_str))
+
+def sign_file(policy_file_path, private_key_input):
     with open(policy_file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     if 'policy' not in data:
         raise ValueError("Invalid policy file: missing 'policy' block")
 
-    priv = ed25519.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(private_key_hex))
+    priv = load_private_key(private_key_input)
     pub = priv.public_key()
     pub_bytes = pub.public_bytes(
         encoding=serialization.Encoding.Raw,
@@ -33,7 +44,7 @@ def sign_file(policy_file_path, private_key_hex):
 
     data['signature'] = {
         'algorithm': 'ed25519',
-        'public_key': pub.public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw).hex(),
+        'public_key': pub_bytes.hex(),
         'signature_hex': sig.hex()
     }
 

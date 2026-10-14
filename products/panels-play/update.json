@@ -7,6 +7,6 @@
   "mandatory": false,
   "release_date": "2026-10-13T00:00:00Z",
   "release_notes": "Official release of Panels Play v1.0.0 with AuthLX licensing, dark theme, and high performance streaming.",
-  "download_url": "https://github.com/ThePanelsHub/the-panels-streaming/releases/download/v1.0.0/androidApp-full-debug.apk",
-  "apk_sha256": "8c05f5a23ad3f7cfa33a4fd7301cb564b59cf7c875338ace279871d76d51d8d3"
+  "download_url": "https://github.com/ThePanelsHub/the-panels-streaming/releases/download/v1.0.0/PanelsPlay-v1.0.0-universal-release.apk",
+  "apk_sha256": "c8d187053d0657f27ffc39d8ce5304701d76fc7dafb86b14170cfb1198593317"
 }
