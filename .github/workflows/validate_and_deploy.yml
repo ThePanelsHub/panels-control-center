@@ -22,5 +22,6 @@ jobs:
 
       - name: Verify policy signatures
         run: |
+          python scripts/verify_policy.py products/panels-play/policy.json
           python scripts/verify_policy.py products/the-panels-streaming/policy.json
           python scripts/verify_policy.py products/template/policy.json
