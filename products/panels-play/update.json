@@ -8,33 +8,33 @@
   "release_date": "2026-10-15T00:00:00Z",
   "release_notes": "Panels Play v1.1.0: Full runtime APK integrity verification, tamper detection, upgrade-compatible namespace refactor, and performance hardening.",
   "download_url": "https://raw.githubusercontent.com/ThePanelsHub/panels-control-center/main/products/panels-play/apks/PanelsPlay-v1.1.0-arm64-v8a.apk",
-  "apk_sha256": "88055aac2cdeaa91f3c63fecd5c32fabd6192176cee6ffc186a0eaa66d31a45b",
+  "apk_sha256": "d70d2f7b49357d2521065a8b02344f8ffe660df97d6a8c6dfcb970f96c7d50fd",
   "artifacts": [
     {
       "abi": "arm64-v8a",
       "download_url": "https://raw.githubusercontent.com/ThePanelsHub/panels-control-center/main/products/panels-play/apks/PanelsPlay-v1.1.0-arm64-v8a.apk",
-      "apk_sha256": "88055aac2cdeaa91f3c63fecd5c32fabd6192176cee6ffc186a0eaa66d31a45b",
+      "apk_sha256": "d70d2f7b49357d2521065a8b02344f8ffe660df97d6a8c6dfcb970f96c7d50fd",
       "file_size_bytes": 48826167,
       "min_sdk": 26
     },
     {
       "abi": "armeabi-v7a",
       "download_url": "https://raw.githubusercontent.com/ThePanelsHub/panels-control-center/main/products/panels-play/apks/PanelsPlay-v1.1.0-armeabi-v7a.apk",
-      "apk_sha256": "38ff143744bf9e3a342f3ae556c062dbf47cad9304a05d7b0fdef9c6a342d547",
+      "apk_sha256": "06ef99d11971c2c804f907335ca051d12bf512345cd632fa45421c83ceacff33",
       "file_size_bytes": 47097495,
       "min_sdk": 26
     },
     {
       "abi": "x86_64",
       "download_url": "https://raw.githubusercontent.com/ThePanelsHub/panels-control-center/main/products/panels-play/apks/PanelsPlay-v1.1.0-x86_64.apk",
-      "apk_sha256": "4717811db9867b65d50f6961cf7b5e50ca7001d09d62f956129c5c70baa6b167",
+      "apk_sha256": "933aa688f966170eedefa4092ab08f98c7a1a1d64ae454af5a7d271af5a932d4",
       "file_size_bytes": 50168383,
       "min_sdk": 26
     },
     {
       "abi": "x86",
       "download_url": "https://raw.githubusercontent.com/ThePanelsHub/panels-control-center/main/products/panels-play/apks/PanelsPlay-v1.1.0-x86.apk",
-      "apk_sha256": "9e4dfc4aa56a21e7cd1d8158867f41ebf6097612724df0964fe7e91728135753",
+      "apk_sha256": "5b2579b7805465f6b28e6cf67fc219e9b0019201ac5d1af7960639abc31bda5e",
       "file_size_bytes": 49169275,
       "min_sdk": 26
     }
