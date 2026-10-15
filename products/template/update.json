@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "product_id": "future-product-template",
+  "latest_version": "1.0.0",
+  "latest_version_code": 1,
+  "min_supported_version": "1.0.0",
+  "mandatory": false,
+  "release_date": "2026-10-12T00:00:00Z",
+  "release_notes": "Initial release",
+  "download_url": "https://example.com/download.apk",
+  "apk_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}
