@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0",
   "product_id": "panels-play",
-  "latest_version": "1.0.0",
-  "latest_version_code": 141,
+  "latest_version": "1.1.0",
+  "latest_version_code": 142,
   "min_supported_version": "1.0.0",
   "mandatory": false,
-  "release_date": "2026-10-14T17:36:48Z",
-  "release_notes": "Official release of Panels Play v1.0.0 with AuthLX licensing, dark theme, and high performance streaming.",
-  "download_url": "https://github.com/ThePanelsHub/the-panels-streaming/releases/download/v1.0.0/PanelsPlay-v1.0.0-universal-release.apk",
-  "apk_sha256": "c8d187053d0657f27ffc39d8ce5304701d76fc7dafb86b14170cfb1198593317"
+  "release_date": "2026-10-15T00:00:00Z",
+  "release_notes": "Panels Play v1.1.0: Full runtime APK integrity verification, tamper detection, upgrade-compatible namespace refactor, and performance hardening.",
+  "download_url": "https://github.com/ThePanelsHub/the-panels-streaming/releases/download/v1.1.0/PanelsPlay-v1.1.0-universal-release.apk",
+  "apk_sha256": "69ee2c0a6939b652402e193b87b1e66f93cd0b13764196d4645343076fee1427"
 }
