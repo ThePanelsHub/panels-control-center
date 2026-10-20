@@ -3,7 +3,7 @@
   "product_id": "panels-play",
   "latest_version": "1.2.1",
   "latest_version_code": 144,
-  "min_supported_version": "1.2.0",
+  "min_supported_version": "1.2.1",
   "mandatory": false,
   "release_date": "2026-10-20T00:00:00Z",
   "release_notes": "Panels Play v1.2.1: Robust startup server reachability, removed stream link copy action, enhanced media audio focus management, and intelligent next episode binge stream auto-selection.",
