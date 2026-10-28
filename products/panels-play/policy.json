@@ -2,10 +2,10 @@
   "schema_version": "1.0",
   "product_id": "panels-play",
   "policy": {
-    "revision": 11,
-    "issued_at": "2026-10-20T00:00:00Z",
-    "expires_at": "2027-10-20T00:00:00Z",
-    "min_version": "1.3.0",
+    "revision": 12,
+    "issued_at": "2026-10-28T00:00:00Z",
+    "expires_at": "2027-10-28T00:00:00Z",
+    "min_version": "1.3.1",
     "blocked_versions": [],
     "maintenance": {
       "enabled": false,
@@ -18,6 +18,6 @@
   "signature": {
     "algorithm": "ed25519",
     "public_key": "5910d52a21f0b0cac77dbf16abf5f1b61c98666308bac0807aa38898765bff50",
-    "signature_hex": "16db9e4aa6ec0b0a6d47360c06cf6a3b52b36235cef7d3f2e6070e93cd3171c0a6eb349bdc89994cd917184dc2b49615ce7430bd89087a64ac44ad6777c63d06"
+    "signature_hex": "a372fd868e7dc62eaa180c412bf04b45d15a2a32dfbfdf937ed999c062711b47406e769457c13f01e7544e64c734714792e569e2dcf9e3274d56be33bb84a007"
   }
 }
